@@ -22,7 +22,7 @@ anonymised bank database, and shows you both the generated SQL and the results.
 Everything here runs in the cloud and in the browser — no local install needed —
 and on free tiers only.
 
-**Stack:** Streamlit · SQLite · Gemini *(or Groq)* free API · the Berka dataset.
+**Stack:** Streamlit · SQLite · Groq free API · the Berka dataset.
 
 ---
 
