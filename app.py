@@ -1,4 +1,8 @@
-"""Ask the Bank — type English, get SQL, run it against the Berka dataset."""
+"""Ask the Bank — type English, get SQL, run it against the Berka dataset.
+
+Results are shown as a table, and (when they contain numbers) as an optional
+bar / line / area chart you can configure.
+"""
 from __future__ import annotations
 
 import pandas as pd
@@ -40,6 +44,44 @@ def ask_model(question: str, error: str | None = None) -> str:
     return sql_guard.clean_sql(llm.generate_sql(SYSTEM_PROMPT, user))
 
 
+def render_chart(df: pd.DataFrame) -> None:
+    """Show an optional chart when the result has something worth plotting."""
+    numeric = df.select_dtypes("number").columns.tolist()
+    if len(df) < 2 or not numeric:
+        return  # a single row or no numbers — nothing useful to chart
+
+    non_numeric = [c for c in df.columns if c not in numeric]
+    st.markdown("#### Chart")
+    col_type, col_x, col_y = st.columns(3)
+
+    with col_type:
+        chart_type = st.selectbox("Chart type", ["Bar", "Line", "Area"],
+                                  key="chart_type")
+    with col_x:
+        x_options = df.columns.tolist()
+        default_x = non_numeric[0] if non_numeric else x_options[0]
+        x_col = st.selectbox("X axis (labels)", x_options,
+                             index=x_options.index(default_x), key="chart_x")
+    with col_y:
+        y_candidates = [c for c in numeric if c != x_col] or numeric
+        y_cols = st.multiselect("Y axis (values)", y_candidates,
+                                default=y_candidates[:1], key="chart_y")
+
+    if not y_cols:
+        st.info("Pick at least one value column to chart.")
+        return
+
+    chart_df = df[[x_col] + y_cols].copy()
+    chart_df[x_col] = chart_df[x_col].astype(str)  # treat labels as categories
+
+    if chart_type == "Bar":
+        st.bar_chart(chart_df, x=x_col, y=y_cols)
+    elif chart_type == "Line":
+        st.line_chart(chart_df, x=x_col, y=y_cols)
+    else:
+        st.area_chart(chart_df, x=x_col, y=y_cols)
+
+
 st.title("🏦 Ask the Bank")
 st.caption("Type a question in plain English. It gets turned into SQL and run "
            "against the Berka Czech-bank dataset.")
@@ -51,7 +93,7 @@ with st.sidebar:
     for ex in [
         "How many clients are there?",
         "What is the average loan amount by loan status?",
-        "Show the 10 accounts with the most transactions.",
+        "Show the 10 districts with the highest total loan amount.",
         "Total loan amount granted in each year.",
         "How many credit cards of each type were issued?",
     ]:
@@ -64,17 +106,22 @@ question = st.text_input("Your question",
                          value=st.session_state.get("question", ""),
                          placeholder="e.g. Which district has the most clients?")
 
-if st.button("Generate SQL & run", type="primary") and question.strip():
+clicked = st.button("Generate SQL & run", type="primary")
+
+if clicked and question.strip():
+    # Clear any previous result so stale output doesn't linger.
+    for key in ("result_sql", "result_df", "result_msg"):
+        st.session_state.pop(key, None)
     try:
         with st.spinner("Asking the model…"):
             sql = ask_model(question)
         safe, reason = sql_guard.is_safe(sql)
         if not safe:
-            st.error(f"Refused to run this query: {reason}")
-            st.code(sql, language="sql")
+            st.session_state["result_sql"] = sql
+            st.session_state["result_msg"] = ("error",
+                                              f"Refused to run this query: {reason}")
         else:
             sql = sql_guard.add_limit(sql)
-            st.code(sql, language="sql")
             try:
                 df = run_query(sql)
             except Exception as exec_err:
@@ -84,11 +131,26 @@ if st.button("Generate SQL & run", type="primary") and question.strip():
                 ok, why = sql_guard.is_safe(sql)
                 if not ok:
                     raise RuntimeError(why)
-                st.code(sql, language="sql")
                 df = run_query(sql)
-            st.success(f"{len(df)} row(s)")
-            st.dataframe(df, use_container_width=True)
+            st.session_state["result_sql"] = sql
+            st.session_state["result_df"] = df
     except llm.LLMError as e:
-        st.error(f"Model error: {e}")
+        st.session_state["result_msg"] = ("error", f"Model error: {e}")
     except Exception as e:
-        st.error(f"Could not run the query: {e}")
+        st.session_state["result_msg"] = ("error", f"Could not run the query: {e}")
+elif clicked:
+    st.warning("Please type a question first.")
+
+# --- Render results (kept in session state so charts survive reruns) ---
+if "result_sql" in st.session_state:
+    st.code(st.session_state["result_sql"], language="sql")
+
+if "result_msg" in st.session_state:
+    level, text = st.session_state["result_msg"]
+    getattr(st, level)(text)
+
+if "result_df" in st.session_state:
+    df = st.session_state["result_df"]
+    st.success(f"{len(df)} row(s)")
+    st.dataframe(df, use_container_width=True)
+    render_chart(df)
