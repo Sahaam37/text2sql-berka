@@ -1,6 +1,8 @@
 # 🏦 Ask the Bank — English-to-SQL on real bank data
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)]([https://your-app-url.streamlit.app](https://text2sql-berka-vo65rfwbcbpgh2szarr2vz.streamlit.app/))
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://text2sql-berka-vo65rfwbcbpgh2szarr2vz.streamlit.app/)
+
+**🔗 Live demo:** https://your-app-url.streamlit.app
 
 **🔗 Live demo:** https://your-app-url.streamlit.app
 
