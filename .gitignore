@@ -1,0 +1,16 @@
+# Secrets — never commit real keys
+.streamlit/secrets.toml
+.env
+
+# Raw Berka source files (commit the built berka.db instead)
+data/*.csv
+data/*.asc
+data/*.tsv
+data/*.txt
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
