@@ -43,7 +43,7 @@ to the model once for a self-correction.
 |------|---------|
 | `build_db.py` | Builds `berka.db` from the data files in `data/` |
 | `schema.py` | Extracts the schema + plain-English hints for the prompt |
-| `llm.py` | Calls the LLM (Gemini by default, Groq optional) |
+| `llm.py` | Calls the LLM (Groq by default, Gemini optional) |
 | `sql_guard.py` | Cleans the SQL and blocks anything that isn't a read-only `SELECT` |
 | `app.py` | The Streamlit UI |
 
