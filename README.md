@@ -2,9 +2,7 @@
 
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://text2sql-berka-vo65rfwbcbpgh2szarr2vz.streamlit.app/)
 
-**🔗 Live demo:** https://your-app-url.streamlit.app
-
-**🔗 Live demo:** https://your-app-url.streamlit.app
+**🔗 Live demo:** https://text2sql-berka-vo65rfwbcbpgh2szarr2vz.streamlit.app/
 
 Type a question in plain English (*"What is the average loan amount by status?"*),
 and this app uses an LLM to turn it into a SQL query, runs it against a real
