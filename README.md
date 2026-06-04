@@ -6,6 +6,13 @@
 
 <img width="956" height="421" alt="image" src="https://github.com/user-attachments/assets/6c60830a-4f76-41fd-bc7d-95966cc2698b" />
 
+## Features
+- **Natural-language querying** — ask in plain English; an LLM (Groq · Llama 3.3 70B) writes the SQL.
+- **Real relational data** — the Berka Czech-bank dataset: 8 tables, real joins and aggregations.
+- **Read-only by design** — only single `SELECT` queries run, enforced by a guard *and* a read-only connection.
+- **Self-correcting** — if a query errors, the model gets the error back and retries once.
+- **Charts** — numeric results can be plotted as bar / line / area charts.
+
 📊 [Database schema & data dictionary](SCHEMA.md)
 
 Type a question in plain English (*"What is the average loan amount by status?"*),
