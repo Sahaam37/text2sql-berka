@@ -6,6 +6,7 @@
 
 <img width="956" height="421" alt="image" src="https://github.com/user-attachments/assets/6c60830a-4f76-41fd-bc7d-95966cc2698b" />
 
+📊 [Database schema & data dictionary](SCHEMA.md)
 
 Type a question in plain English (*"What is the average loan amount by status?"*),
 and this app uses an LLM to turn it into a SQL query, runs it against a real
