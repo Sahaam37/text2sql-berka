@@ -1,4 +1,4 @@
-"""Swappable LLM client. Default provider is Gemini; set LLM_PROVIDER=groq to switch.
+"""Swappable LLM client. Default provider is groq; set LLM_PROVIDER=gemini to switch.
 
 Config is read from Streamlit secrets first, then environment variables, so the
 same code works locally and on Streamlit Community Cloud / Hugging Face Spaces.
